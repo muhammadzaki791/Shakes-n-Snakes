@@ -38,7 +38,7 @@ export function Footer() {
                 Crave It. Order It. Love It. Your favorite shakes, fries, and snacks — made fresh, delivered fast.
               </p>
               <div className="space-y-2 text-sm text-brand-text-secondary">
-                <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-brand-primary" /><span>{process.env.NEXT_PUBLIC_PHONE_NUMBER || '0300-1234567'}</span></div>
+                <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-brand-primary" /><span>{process.env.NEXT_PUBLIC_PHONE_NUMBER || '+92 335 7494658'}</span></div>
                 <div className="flex items-center gap-2"><Mail className="h-4 w-4 text-brand-primary" /><span>hello@shakesnsnacks.pk</span></div>
                 <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-brand-primary" /><span>Karachi, Pakistan</span></div>
               </div>

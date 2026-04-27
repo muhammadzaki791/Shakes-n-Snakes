@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Clock, MessageCircle } from 'lucide-react'
 import { FadeIn } from '@/lib/animations'
 
 const contactInfo = [
-  { icon: Phone, label: 'Phone', value: process.env.NEXT_PUBLIC_PHONE_NUMBER || '0300-1234567' },
+  { icon: Phone, label: 'Phone', value: process.env.NEXT_PUBLIC_PHONE_NUMBER || '+92 335 7494658' },
   { icon: Mail, label: 'Email', value: 'hello@shakesnsnacks.pk' },
   { icon: MapPin, label: 'Location', value: 'Karachi, Pakistan' },
   { icon: Clock, label: 'Hours', value: 'Mon-Thu 4PM-12AM, Fri-Sun 2PM-1AM' },

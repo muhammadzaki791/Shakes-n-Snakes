@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Download, Mail, Trash2 } from 'lucide-react'
-import { client, writeClient } from '@/lib/client'
+import { client } from '@/lib/client'
 
 interface Subscriber {
   _id: string

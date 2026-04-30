@@ -14,4 +14,9 @@ export const structure: StructureResolver = (S) =>
       S.listItem().title('Categories').child(S.documentTypeList('category').title('Categories')),
       S.listItem().title('Newsletter').child(S.documentTypeList('newsletter').title('Subscribers').defaultOrdering([{ field: '_createdAt', direction: 'desc' }])),
       S.listItem().title('SEO').child(S.documentTypeList('seo').title('SEO Metadata')),
+      S.divider(),
+      S.listItem().title('📋 Orders').child(S.documentTypeList('order').title('Orders').defaultOrdering([{ field: 'orderDate', direction: 'desc' }])),
+      S.listItem().title('📊 Sales Records').child(S.documentTypeList('salesRecord').title('Sales Records').defaultOrdering([{ field: 'date', direction: 'desc' }])),
+      S.listItem().title('🧅 Ingredients').child(S.documentTypeList('ingredient').title('Ingredients').defaultOrdering([{ field: 'name', direction: 'asc' }])),
+      S.listItem().title('📖 Recipes').child(S.documentTypeList('recipe').title('Recipes')),
     ])

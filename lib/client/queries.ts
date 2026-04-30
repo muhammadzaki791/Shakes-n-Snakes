@@ -150,3 +150,128 @@ export const getHomepageContentQuery = groq`{
     emoji
   }
 }`
+
+// ===== ORDER QUERIES =====
+
+export const getOrdersQuery = groq`
+  *[_type == "order"] | order(orderDate desc) {
+    _id, orderNumber, orderDate, customerName, items,
+    subtotal, discountType, discountValue, discountAmount,
+    total, status, paymentMethod, orderSource, notes
+  }
+`
+
+export const getOrdersByStatusQuery = groq`
+  *[_type == "order" && status == $status] | order(orderDate desc) {
+    _id, orderNumber, orderDate, customerName, items,
+    subtotal, discountType, discountValue, discountAmount,
+    total, status, paymentMethod, orderSource, notes
+  }
+`
+
+export const getOrderByIdQuery = groq`
+  *[_type == "order" && _id == $id][0] {
+    _id, orderNumber, orderDate, customerName, items,
+    subtotal, discountType, discountValue, discountAmount,
+    total, status, paymentMethod, orderSource, notes
+  }
+`
+
+export const getNextOrderNumberQuery = groq`
+  {
+    "nextNumber": coalesce(*[_type == "order"] | order(orderNumber desc) [0].orderNumber, 0) + 1
+  }
+`
+
+export const getOrdersByDateRangeQuery = groq`
+  *[_type == "order" && orderDate >= $startDate && orderDate <= $endDate] | order(orderDate desc) {
+    _id, orderNumber, orderDate, customerName, items,
+    subtotal, discountType, discountValue, discountAmount,
+    total, status, paymentMethod, orderSource, notes
+  }
+`
+
+export const getTodayOrderStatsQuery = groq`
+  {
+    "todayOrders": count(*[_type == "order" && orderDate >= $todayStart && orderDate <= $todayEnd]),
+    "todayRevenue": math::sum(*[_type == "order" && orderDate >= $todayStart && orderDate <= $todayEnd && status in ["completed", "in-progress", "pending"]].total),
+    "pendingOrders": count(*[_type == "order" && status == "pending"]),
+    "lowStockCount": count(*[_type == "ingredient" && currentStock < minimumStock])
+  }
+`
+
+// ===== SALES RECORD QUERIES =====
+
+export const getSalesRecordByDateQuery = groq`
+  *[_type == "salesRecord" && date == $date][0] {
+    _id, date, totalOrders, completedOrders, cancelledOrders,
+    totalRevenue, totalDiscount, netRevenue, paymentBreakdown,
+    topItems, archivedOrdersData
+  }
+`
+
+export const getSalesRecordsByDateRangeQuery = groq`
+  *[_type == "salesRecord" && date >= $startDate && date <= $endDate] | order(date desc) {
+    _id, date, totalOrders, completedOrders, cancelledOrders,
+    totalRevenue, totalDiscount, netRevenue, paymentBreakdown, topItems
+  }
+`
+
+export const getSalesRecordsByMonthQuery = groq`
+  *[_type == "salesRecord" && date >= $monthStart && date <= $monthEnd] | order(date asc) {
+    _id, date, totalOrders, completedOrders, cancelledOrders,
+    totalRevenue, totalDiscount, netRevenue, paymentBreakdown, topItems
+  }
+`
+
+// ===== INGREDIENT QUERIES =====
+
+export const getAllIngredientsQuery = groq`
+  *[_type == "ingredient"] | order(name asc) {
+    _id, name, slug, unit, pricePerUnit, currentStock,
+    minimumStock, supplier, ingredientCategory, notes
+  }
+`
+
+export const getLowStockIngredientsQuery = groq`
+  *[_type == "ingredient" && currentStock < minimumStock] | order(name asc) {
+    _id, name, slug, unit, pricePerUnit, currentStock,
+    minimumStock, supplier, ingredientCategory
+  }
+`
+
+// ===== RECIPE QUERIES =====
+
+export const getAllRecipesQuery = groq`
+  *[_type == "recipe"] | order(menuItemTitle asc) {
+    _id, menuItemTitle,
+    menuItemRef->{_id, _type, title},
+    ingredients[]{
+      _key,
+      ingredientRef->{_id, name, unit, pricePerUnit},
+      quantityNeeded,
+      unit
+    }
+  }
+`
+
+export const getRecipeByMenuItemQuery = groq`
+  *[_type == "recipe" && menuItemRef._ref == $menuItemId][0] {
+    _id, menuItemTitle,
+    menuItemRef->{_id, _type, title},
+    ingredients[]{
+      _key,
+      ingredientRef->{_id, name, unit, pricePerUnit},
+      quantityNeeded,
+      unit
+    }
+  }
+`
+
+// ===== MENU ITEMS FOR ORDER FORM =====
+
+export const getAllMenuItemsForOrderQuery = groq`
+  *[_type in ["savoury", "shake", "teaCoffee", "limca", "golaGanda", "other"] && isAvailable == true] | order(title asc) {
+    _id, _type, title, sizes
+  }
+`

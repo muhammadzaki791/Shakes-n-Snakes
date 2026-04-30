@@ -7,5 +7,13 @@ import { other } from './other'
 import { category } from './category'
 import { newsletter } from './newsletter'
 import { seo } from './seo'
+import { order } from './order'
+import { ingredient } from './ingredient'
+import { recipe } from './recipe'
+import { salesRecord } from './salesRecord'
 
-export const schemaTypes = [savoury, shake, teaCoffee, limca, golaGanda, other, category, newsletter, seo]
+export const schemaTypes = [
+  savoury, shake, teaCoffee, limca, golaGanda, other,
+  category, newsletter, seo,
+  order, ingredient, recipe, salesRecord,
+]

@@ -89,9 +89,23 @@ export function OrderTable({
                   <div>{date.toLocaleDateString('en-PK')}</div>
                   <div>{date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}</div>
                 </TableCell>
-                <TableCell className="text-brand-text">{order.customerName || 'Walk-in'}</TableCell>
-                <TableCell className="text-brand-text-secondary text-xs">
-                  {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                <TableCell className="text-brand-text">
+                  <div>{order.customerName || 'Walk-in'}</div>
+                  {order.tableNumber && (
+                    <div className="text-xs text-brand-text-muted mt-0.5">Table {order.tableNumber}</div>
+                  )}
+                </TableCell>
+                <TableCell className="text-brand-text-secondary text-xs max-w-[260px]">
+                  <div className="truncate" title={order.items.map((i) => `${i.menuItemTitle}${i.quantity > 1 ? ` ×${i.quantity}` : ''}`).join(', ')}>
+                    {order.items.map((i, idx) => (
+                      <span key={idx}>
+                        {idx > 0 && ', '}
+                        <span className="text-brand-text">{i.menuItemTitle}</span>
+                        {i.quantity > 1 && <span className="text-brand-text-muted"> ×{i.quantity}</span>}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="text-[10px] text-brand-text-muted mt-0.5">{order.items.length} item{order.items.length !== 1 ? 's' : ''}</div>
                 </TableCell>
                 <TableCell className="text-right font-medium text-brand-text">Rs. {order.total}</TableCell>
                 <TableCell>

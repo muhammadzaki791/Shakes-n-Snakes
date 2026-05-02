@@ -155,7 +155,7 @@ export const getHomepageContentQuery = groq`{
 
 export const getOrdersQuery = groq`
   *[_type == "order"] | order(orderDate desc) {
-    _id, orderNumber, orderDate, customerName, items,
+    _id, orderNumber, orderDate, customerName, tableNumber, items,
     subtotal, discountType, discountValue, discountAmount,
     total, status, paymentMethod, orderSource, notes
   }
@@ -163,7 +163,7 @@ export const getOrdersQuery = groq`
 
 export const getOrdersByStatusQuery = groq`
   *[_type == "order" && status == $status] | order(orderDate desc) {
-    _id, orderNumber, orderDate, customerName, items,
+    _id, orderNumber, orderDate, customerName, tableNumber, items,
     subtotal, discountType, discountValue, discountAmount,
     total, status, paymentMethod, orderSource, notes
   }
@@ -171,7 +171,7 @@ export const getOrdersByStatusQuery = groq`
 
 export const getOrderByIdQuery = groq`
   *[_type == "order" && _id == $id][0] {
-    _id, orderNumber, orderDate, customerName, items,
+    _id, orderNumber, orderDate, customerName, tableNumber, items,
     subtotal, discountType, discountValue, discountAmount,
     total, status, paymentMethod, orderSource, notes
   }
@@ -185,7 +185,7 @@ export const getNextOrderNumberQuery = groq`
 
 export const getOrdersByDateRangeQuery = groq`
   *[_type == "order" && orderDate >= $startDate && orderDate <= $endDate] | order(orderDate desc) {
-    _id, orderNumber, orderDate, customerName, items,
+    _id, orderNumber, orderDate, customerName, tableNumber, items,
     subtotal, discountType, discountValue, discountAmount,
     total, status, paymentMethod, orderSource, notes
   }

@@ -25,6 +25,11 @@ export const order = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'tableNumber',
+      title: 'Table Number',
+      type: 'string',
+    }),
+    defineField({
       name: 'items',
       title: 'Order Items',
       type: 'array',

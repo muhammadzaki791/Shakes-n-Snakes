@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Separator } from '@/components/ui/separator'
 import { OrderStatusBadge } from './order-status-badge'
 import { adminWriteClient } from '@/lib/client'
-import { Printer } from 'lucide-react'
+import { Printer, ChefHat } from 'lucide-react'
 
 interface OrderDetailProps {
   order: Order | null
@@ -37,6 +37,68 @@ export function OrderDetail({ order, open, onOpenChange, onStatusChange, onEdit 
     }
   }
 
+  function handlePrintKitchenChit() {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+    const itemsHtml = order!.items
+      .map(
+        (i) => `
+          <tr>
+            <td class="qty">${i.quantity}×</td>
+            <td>
+              <div class="name">${i.menuItemTitle}</div>
+              <div class="size">${i.sizeName}</div>
+            </td>
+          </tr>
+        `,
+      )
+      .join('')
+    printWindow.document.write(`
+      <html><head><title>KOT #${order!.orderNumber}</title>
+      <style>
+        @page { size: 80mm auto; margin: 4mm; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; padding: 0; margin: 0; width: 80mm; color: #000; }
+        .wrap { padding: 4px 6px; }
+        h1 { text-align: center; margin: 4px 0; font-size: 18px; letter-spacing: 1px; border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 4px 0; }
+        .meta-row { display: flex; justify-content: space-between; font-size: 13px; margin: 4px 0; }
+        .meta-row strong { font-weight: bold; }
+        .order-no { text-align: center; font-size: 22px; font-weight: bold; margin: 6px 0; }
+        .table-no { text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+        th { text-align: left; font-size: 12px; border-bottom: 2px solid #000; padding: 4px 0; }
+        td { padding: 6px 2px; border-bottom: 1px dashed #888; vertical-align: top; }
+        td.qty { font-size: 18px; font-weight: bold; width: 38px; }
+        td .name { font-size: 15px; font-weight: bold; }
+        td .size { font-size: 12px; color: #333; }
+        .notes { margin-top: 8px; padding: 6px; border: 1px dashed #000; font-size: 13px; }
+        .footer { text-align: center; margin-top: 10px; font-size: 11px; border-top: 2px solid #000; padding-top: 4px; }
+      </style></head><body>
+      <div class="wrap">
+        <h1>KITCHEN ORDER</h1>
+        <div class="order-no">Order #${order!.orderNumber}</div>
+        ${order!.tableNumber ? `<div class="table-no">Table ${order!.tableNumber}</div>` : ''}
+        <div class="meta-row">
+          <span>${date.toLocaleDateString('en-PK')}</span>
+          <span><strong>${date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}</strong></span>
+        </div>
+        <div class="meta-row">
+          <span>Customer:</span>
+          <span><strong>${order!.customerName || 'Walk-in'}</strong></span>
+        </div>
+        <table>
+          <thead><tr><th>Qty</th><th>Item</th></tr></thead>
+          <tbody>${itemsHtml}</tbody>
+        </table>
+        ${order!.notes ? `<div class="notes"><strong>NOTE:</strong> ${order!.notes}</div>` : ''}
+        <div class="footer">-- ${order!.items.reduce((s, i) => s + i.quantity, 0)} item(s) --</div>
+      </div>
+      <script>window.print(); window.close();</script>
+      </body></html>
+    `)
+    printWindow.document.close()
+  }
+
   function handlePrint() {
     const printWindow = window.open('', '_blank')
     if (!printWindow) return
@@ -55,7 +117,7 @@ export function OrderDetail({ order, open, onOpenChange, onStatusChange, onEdit 
       <h2>Shakes n Snacks</h2>
       <p class="meta">Order #${order!.orderNumber}</p>
       <p class="meta">${date.toLocaleDateString('en-PK')} ${date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}</p>
-      <p class="meta">Customer: ${order!.customerName || 'Walk-in'}</p>
+      <p class="meta">Customer: ${order!.customerName || 'Walk-in'}${order!.tableNumber ? ` &nbsp;|&nbsp; Table: ${order!.tableNumber}` : ''}</p>
       <table>
         <tr><th>Item</th><th>Qty</th><th class="right">Price</th></tr>
         ${order!.items.map((i) => `<tr><td>${i.menuItemTitle} (${i.sizeName})</td><td>${i.quantity}</td><td class="right">Rs. ${i.lineTotal}</td></tr>`).join('')}
@@ -97,6 +159,10 @@ export function OrderDetail({ order, open, onOpenChange, onStatusChange, onEdit 
             <div>
               <span className="text-brand-text-muted">Customer</span>
               <p className="text-brand-text">{order.customerName || 'Walk-in'}</p>
+            </div>
+            <div>
+              <span className="text-brand-text-muted">Table</span>
+              <p className="text-brand-text">{order.tableNumber || '—'}</p>
             </div>
             <div>
               <span className="text-brand-text-muted">Source</span>
@@ -190,10 +256,18 @@ export function OrderDetail({ order, open, onOpenChange, onStatusChange, onEdit 
                 Edit Order
               </button>
               <button
-                onClick={handlePrint}
-                className="flex items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-brand-text hover:border-brand-primary transition-colors"
+                onClick={handlePrintKitchenChit}
+                className="flex items-center justify-center gap-2 rounded-lg bg-brand-primary/10 border border-brand-primary/40 px-3 py-2 text-sm font-medium text-brand-primary hover:bg-brand-primary/20 transition-colors"
+                title="Print kitchen order ticket"
               >
-                <Printer className="h-4 w-4" /> Print
+                <ChefHat className="h-4 w-4" /> Kitchen Chit
+              </button>
+              <button
+                onClick={handlePrint}
+                className="flex items-center justify-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-brand-text hover:border-brand-primary transition-colors"
+                title="Print customer receipt"
+              >
+                <Printer className="h-4 w-4" /> Receipt
               </button>
             </div>
           </div>

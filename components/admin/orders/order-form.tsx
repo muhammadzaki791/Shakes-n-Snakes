@@ -27,6 +27,7 @@ const orderItemSchema = z.object({
 
 const orderFormSchema = z.object({
   customerName: z.string().optional(),
+  tableNumber: z.string().optional(),
   items: z.array(orderItemSchema).min(1, 'Add at least one item'),
   discountType: z.enum(['none', 'percentage', 'flat']),
   discountValue: z.number().min(0).optional(),
@@ -53,6 +54,7 @@ export function OrderForm({ open, onOpenChange, onSuccess, editOrder }: OrderFor
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
       customerName: '',
+      tableNumber: '',
       items: [{ menuItemTitle: '', menuItemType: '', sizeName: '', quantity: 1, unitPrice: 0, lineTotal: 0 }],
       discountType: 'none',
       discountValue: 0,
@@ -79,6 +81,7 @@ export function OrderForm({ open, onOpenChange, onSuccess, editOrder }: OrderFor
     if (editOrder && open) {
       form.reset({
         customerName: editOrder.customerName || '',
+        tableNumber: editOrder.tableNumber || '',
         items: editOrder.items.map((i) => ({
           menuItemTitle: i.menuItemTitle,
           menuItemType: i.menuItemType,
@@ -96,6 +99,7 @@ export function OrderForm({ open, onOpenChange, onSuccess, editOrder }: OrderFor
     } else if (open && !editOrder) {
       form.reset({
         customerName: '',
+        tableNumber: '',
         items: [{ menuItemTitle: '', menuItemType: '', sizeName: '', quantity: 1, unitPrice: 0, lineTotal: 0 }],
         discountType: 'none',
         discountValue: 0,
@@ -170,6 +174,7 @@ export function OrderForm({ open, onOpenChange, onSuccess, editOrder }: OrderFor
       if (editOrder) {
         await adminWriteClient.patch(editOrder._id).set({
           customerName: data.customerName || undefined,
+          tableNumber: data.tableNumber || undefined,
           items: sanitizedItems,
           subtotal,
           discountType: data.discountType,
@@ -187,6 +192,7 @@ export function OrderForm({ open, onOpenChange, onSuccess, editOrder }: OrderFor
           orderNumber: nextNumber || 1,
           orderDate: new Date().toISOString(),
           customerName: data.customerName || undefined,
+          tableNumber: data.tableNumber || undefined,
           items: sanitizedItems,
           subtotal,
           discountType: data.discountType,
@@ -221,14 +227,24 @@ export function OrderForm({ open, onOpenChange, onSuccess, editOrder }: OrderFor
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] pr-4">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Customer Name */}
-            <div>
-              <Label className="text-brand-text-secondary">Customer Name (optional)</Label>
-              <Input
-                {...form.register('customerName')}
-                placeholder="Walk-in customer"
-                className="mt-1 bg-brand-elevated border-white/10 text-brand-text"
-              />
+            {/* Customer Name + Table Number */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-2">
+                <Label className="text-brand-text-secondary">Customer Name (optional)</Label>
+                <Input
+                  {...form.register('customerName')}
+                  placeholder="Walk-in customer"
+                  className="mt-1 bg-brand-elevated border-white/10 text-brand-text"
+                />
+              </div>
+              <div>
+                <Label className="text-brand-text-secondary">Table # (optional)</Label>
+                <Input
+                  {...form.register('tableNumber')}
+                  placeholder="e.g. 5"
+                  className="mt-1 bg-brand-elevated border-white/10 text-brand-text"
+                />
+              </div>
             </div>
 
             {/* Order Items */}

@@ -15,6 +15,7 @@ export interface Order {
   orderNumber: number
   orderDate: string
   customerName?: string
+  tableNumber?: string
   items: OrderItem[]
   subtotal: number
   discountType: 'none' | 'percentage' | 'flat'
